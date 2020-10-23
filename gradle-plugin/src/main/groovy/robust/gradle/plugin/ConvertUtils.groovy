@@ -13,7 +13,9 @@ import java.util.regex.Matcher
  */
 class ConvertUtils {
     static List<CtClass> toCtClasses(Collection<TransformInput> inputs, ClassPool classPool) {
+//        这里保留的是所有的class文件
         List<String> classNames = new ArrayList<>()
+//        根据所有的class就得到了CtClasss  同事有处理了同一个包的问题
         List<CtClass> allClass = new ArrayList<>();
         def startTime = System.currentTimeMillis()
         inputs.each {
@@ -40,6 +42,7 @@ class ConvertUtils {
 
             it.jarInputs.each {
                 classPool.insertClassPath(it.file.absolutePath)
+//                如果是jar包 就解压
                 def jarFile = new JarFile(it.file)
                 Enumeration<JarEntry> classes = jarFile.entries();
                 while (classes.hasMoreElements()) {
@@ -55,25 +58,24 @@ class ConvertUtils {
                 }
             }
         }
-        def cost = (System.currentTimeMillis() - startTime) / 1000
-        println "read all class file cost $cost second"
+
         classNames.each {
             try {
+//               根据lcass 创建CtClass 这个是get的机制
                 allClass.add(classPool.get(it));
             } catch (javassist.NotFoundException e) {
                 println "class not found exception class name:  $it "
 
             }
-
         }
 
         Collections.sort(allClass, new Comparator<CtClass>() {
             @Override
             int compare(CtClass class1, CtClass class2) {
-                return class1.getName() <=> class2.getName();
+                return class1.getName() <=> class2.getName()
             }
-        });
-        return allClass;
+        })
+        return allClass
     }
 
 
