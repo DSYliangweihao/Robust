@@ -12,6 +12,7 @@ import java.util.regex.Matcher
  * Created by mivanzhang on 16/11/3.
  */
 class ConvertUtils {
+//    这个类的作用就是根据包或者jar遍历出所有的.class文件然后转化为CtClass集合
     static List<CtClass> toCtClasses(Collection<TransformInput> inputs, ClassPool classPool) {
 //        这里保留的是所有的class文件
         List<String> classNames = new ArrayList<>()

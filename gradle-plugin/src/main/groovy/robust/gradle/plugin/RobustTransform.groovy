@@ -168,6 +168,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
             classPool.appendClassPath((String) it.absolutePath)
         }
 
+//      得到所有的CtClass
         def box = ConvertUtils.toCtClasses(inputs, classPool)
 
 //        logger.quiet "check all class cost $cost second, class count: ${box.size()}"
