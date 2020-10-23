@@ -11,7 +11,7 @@ ext{
 
 
 def String getApplicationID(String name){
-    return "'$BASE_APPLICATION_ID''$name'"
+    return "$BASE_APPLICATION_ID$name"
 }
 buildscript {
     repositories {
