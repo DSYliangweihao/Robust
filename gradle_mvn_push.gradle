@@ -5,10 +5,10 @@ version = VERSION_NAME
 
 
 def getPropertyFromLocalProperties(key) {
-    File file = project.rootProject.file('local.properties');
+    File file = project.rootProject.file('local.properties')
     if (file.exists()) {
         Properties properties = new Properties()
-        properties.load(file.newDataInputStream());
+        properties.load(file.newDataInputStream())
         return properties.getProperty(key)
     }
 }
@@ -19,7 +19,7 @@ def getRepositoryUrl() {
 }
 
 def isSnapshot() {
-    return version.endsWith("SNAPSHOT");
+    return version.endsWith("SNAPSHOT")
 }
 
 def hasAndroidPlugin() {

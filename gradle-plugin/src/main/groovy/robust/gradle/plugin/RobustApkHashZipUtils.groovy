@@ -5,13 +5,31 @@ import com.meituan.robust.Constants
 import java.util.zip.*
 
 /**
+ *
+ *
+ * 主要是对zip文件的输入
+ *
+ *
+ * 这里zip文件的输入流程
+ *
+ * 创建ZipOutputStream
+ * 设置压缩的等级
+ * putEntry
+ * write
+ * flush
+ *
+ * 然后这样一次循环 就进行了而已压缩
  * Created by hedex on 17/2/14.
  */
 class RobustApkHashZipUtils {
     static void packZip(File output, List<File> sources) throws IOException {
+//        输入的文件列表 然后输出为zip
+
         ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(output));
+//       快速压缩
         zipOut.setLevel(Deflater.BEST_SPEED);
 
+//        根据文件的属性
         List<File> fileList = new LinkedList<File>();
         for (Object source : sources) {
             if (source instanceof File){
@@ -47,9 +65,11 @@ class RobustApkHashZipUtils {
             return;
         }
 
+//      目录下的所有文件
         File[] files = dir.listFiles();
+//        创建一个文件目录
         path = buildPath(path, dir.getName());
-
+//  所有的源文件
         for (File source : files) {
             if (source.isDirectory()) {
                 zipDir(zos, path, source);
@@ -64,16 +84,17 @@ class RobustApkHashZipUtils {
         if (!file.canRead()) {
             return;
         }
-
+//  文件添加 entty
         zos.putNextEntry(new ZipEntry(buildPath(path, file.getAbsolutePath())));
 
-        FileInputStream fis = new FileInputStream(file);
+        FileInputStream fis = new FileInputStream(file)
 
-        byte[] buffer = new byte[4092];
-        int byteCount = 0;
+//        这一块是从文件里面 putentry 然后 write 流数据
+        byte[] buffer = new byte[4092]
+        def byteCount
         while ((byteCount = fis.read(buffer)) != -1) {
-            zos.write(buffer, 0, byteCount);
-            System.out.flush();
+            zos.write(buffer, 0, byteCount)
+            System.out.flush()
         }
 
         fis.close();
@@ -86,10 +107,12 @@ class RobustApkHashZipUtils {
             tempZipFile.delete();
         }
 
+//         创建一个临时的文件流
         ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(tempZipFile))
 
         //copy ap file
         ZipFile apZipFile = new ZipFile(apFile)
+//        获取文件中的entry
         final Enumeration<? extends ZipEntry> entries = apZipFile.entries();
         while (entries.hasMoreElements()) {
             ZipEntry originZipEntry = entries.nextElement();
@@ -118,6 +141,7 @@ class RobustApkHashZipUtils {
         tempZipFile.renameTo(apFile.getAbsolutePath())
     }
 
+    // 这里相当于创建了一个新的zip entry
     private static ZipEntry getRightZipEntry(ZipEntry originZipEntry){
         ZipEntry rightZipEntry = new ZipEntry(originZipEntry.getName());
         if (ZipEntry.STORED == originZipEntry.getMethod()) {
@@ -146,6 +170,7 @@ class RobustApkHashZipUtils {
         return rightZipEntry;
     }
 
+    // 32位的标识符
     private static long computeFileCrc32(File file) throws IOException {
         InputStream inputStream = new FileInputStream(file);
         CRC32 crc = new CRC32();
@@ -158,7 +183,7 @@ class RobustApkHashZipUtils {
 
     /**
      * add zip entry
-     *
+     *  向zip里面添加stream流数据ZipEntry 是关进
      * @param zipOutputStream
      * @param zipEntry
      * @param inputStream

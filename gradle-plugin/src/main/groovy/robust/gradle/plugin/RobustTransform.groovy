@@ -27,10 +27,8 @@ class RobustTransform extends Transform implements Plugin<Project> {
     private static List<String> exceptMethodList = new ArrayList<>();
     private static boolean isHotfixMethodLevel = false;
     private static boolean isExceptMethodLevel = false;
-//    private static boolean isForceInsert = true;
-    private static boolean isForceInsert = false;
-//    private static boolean useASM = false;
-    private static boolean useASM = true;
+     private static boolean isForceInsert = false;
+     private static boolean useASM = true;
     private static boolean isForceInsertLambda = false;
 
     def robust
@@ -62,15 +60,19 @@ class RobustTransform extends Transform implements Plugin<Project> {
                 project.afterEvaluate(new RobustApkHashAction())
                 logger.quiet "Register robust transform successful !!!"
             }
+            // 这里是开关robust的
             if (null != robust.switch.turnOnRobust && !"true".equals(String.valueOf(robust.switch.turnOnRobust))) {
                 return;
             }
         } else {
+//            开始注册转换器
             project.android.registerTransform(this)
+//           这里主要是备份打包的文件
             project.afterEvaluate(new RobustApkHashAction())
         }
     }
 
+//    初始化一些配置然后通过Properties中读取配置文件
     def initConfig() {
         hotfixPackageList = new ArrayList<>()
         hotfixMethodList = new ArrayList<>()
@@ -123,11 +125,12 @@ class RobustTransform extends Transform implements Plugin<Project> {
         return "robust"
     }
 
+//    配置输入的文件类型
     @Override
     Set<QualifiedContent.ContentType> getInputTypes() {
         return TransformManager.CONTENT_CLASS
     }
-
+//  配置输入的作用域
     @Override
     Set<QualifiedContent.Scope> getScopes() {
         return TransformManager.SCOPE_FULL_PROJECT
@@ -140,10 +143,16 @@ class RobustTransform extends Transform implements Plugin<Project> {
 
 
     @Override
-    void transform(Context context, Collection<TransformInput> inputs, Collection<TransformInput> referencedInputs, TransformOutputProvider outputProvider, boolean isIncremental) throws IOException, TransformException, InterruptedException {
+    void transform(Context context, Collection<TransformInput> inputs,
+                   Collection<TransformInput> referencedInputs,
+                   TransformOutputProvider outputProvider,
+                   boolean isIncremental) throws IOException, TransformException, InterruptedException {
+
         logger.quiet '================robust start================'
-        def startTime = System.currentTimeMillis()
+
+//        1.初始化删除所有的目录
         outputProvider.deleteAll()
+//        2.创建工程目录文件
         File jarFile = outputProvider.getContentLocation("main", getOutputTypes(), getScopes(),
                 Format.JAR);
         if(!jarFile.getParentFile().exists()){
@@ -153,13 +162,14 @@ class RobustTransform extends Transform implements Plugin<Project> {
             jarFile.delete();
         }
 
+//        3.创建class池，这里需要吧比如android.jar添加进去
         ClassPool classPool = new ClassPool()
         project.android.bootClasspath.each {
             classPool.appendClassPath((String) it.absolutePath)
         }
 
         def box = ConvertUtils.toCtClasses(inputs, classPool)
-        def cost = (System.currentTimeMillis() - startTime) / 1000
+
 //        logger.quiet "check all class cost $cost second, class count: ${box.size()}"
         if (useASM) {
             insertcodeStrategy = new AsmInsertImpl(hotfixPackageList, hotfixMethodList, exceptPackageList, exceptMethodList, isHotfixMethodLevel, isExceptMethodLevel, isForceInsertLambda);
@@ -176,7 +186,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
         }
         logger.quiet "===robust print id end==="
 
-        cost = (System.currentTimeMillis() - startTime) / 1000
+
         logger.quiet "robust cost $cost second"
         logger.quiet '================robust   end================'
     }

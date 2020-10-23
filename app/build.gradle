@@ -4,14 +4,14 @@ apply plugin: 'me.tatarka.retrolambda'
 apply plugin: 'robust'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.2'
+    compileSdkVersion COMPILE_VERSION
+    buildToolsVersion BUILD_VERSION
     defaultConfig {
-        applicationId "com.meituan.robust.sample"
-        minSdkVersion 9
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
+        applicationId getApplicationID("sample")
+        minSdkVersion MIN_VERSION
+        targetSdkVersion COMPILE_VERSION
+        versionCode APP_VERSION
+        versionName APP_VER_NAME
     }
     lintOptions {
         checkReleaseBuilds false
@@ -66,10 +66,10 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile 'com.android.support:appcompat-v7:28.0.0-rc02'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'com.android.support:design:25.4.0'
+    compile 'com.android.support:design:28.0.0-rc02'
     compile 'org.javassist:javassist:3.20.0-GA'
     compile project(path: ':patch')
 }

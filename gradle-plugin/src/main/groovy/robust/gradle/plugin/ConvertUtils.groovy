@@ -17,12 +17,19 @@ class ConvertUtils {
         List<CtClass> allClass = new ArrayList<>();
         def startTime = System.currentTimeMillis()
         inputs.each {
+//            这类所遍历的就是我们写好的输入和作用域的class  那么就就是所有的class
             it.directoryInputs.each {
+//                目录的绝对路径
                 def dirPath = it.file.absolutePath
+//                插入class路径
                 classPool.insertClassPath(it.file.absolutePath)
+//                遍历路径文件
                 org.apache.commons.io.FileUtils.listFiles(it.file, null, true).each {
+//                    如果是.class文件 根据路径然后附加类名
                     if (it.absolutePath.endsWith(SdkConstants.DOT_CLASS)) {
-                        def className = it.absolutePath.substring(dirPath.length() + 1, it.absolutePath.length() - SdkConstants.DOT_CLASS.length()).replaceAll(Matcher.quoteReplacement(File.separator), '.')
+                        def className = it.absolutePath.substring(dirPath.length() + 1,
+                                it.absolutePath.length() - SdkConstants.DOT_CLASS.length())
+                                .replaceAll(Matcher.quoteReplacement(File.separator), '.')
                         if(classNames.contains(className)){
                             throw new RuntimeException("You have duplicate classes with the same name : "+className+" please remove duplicate classes ")
                         }

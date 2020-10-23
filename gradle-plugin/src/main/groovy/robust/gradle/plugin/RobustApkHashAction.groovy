@@ -18,23 +18,28 @@ class RobustApkHashAction implements Action<Project> {
     @Override
     void execute(Project project) {
         project.android.applicationVariants.each { variant ->
+//            找到打包的任务  com.android.build.gradle.tasks.PackageApplication.ConfigAction
             def packageTask = project.tasks.findByName("package${variant.name.capitalize()}")
 
             if (packageTask == null) {
                 return
             }
 
+//            配置 编译 运行
             packageTask.doFirst {
 //                project.logger.quiet("===start compute robust apk hash===")
 //                def startTime = System.currentTimeMillis()
+//               这里就是我们把所有的java文件添加进去
                 List<File> partFiles = new ArrayList<>()
 
                 if (isGradlePlugin300orAbove(project)){
 
+                    // 资源路径
                     //protected FileCollection resourceFiles;
                     FileCollection resourceFiles
                     if (isGradlePlugin320orAbove(project)) {
                         try {
+//                            这里可以直接通过任务获取文件件的路径
                             //gradle 4.6 适配
                             resourceFiles = packageTask.resourceFiles.get()
                             partFiles.add(resourceFiles.getFiles())
@@ -115,6 +120,7 @@ class RobustApkHashAction implements Action<Project> {
                         partFiles.add(assets.getFiles())
                     }
 
+//                    这类包含了很多 例如java 资源 等等
                     String robustHash = computeRobustHash(partFiles)
                     if (gradleToolsBigThan350) {
                         //gradle tools 3.5.0+ , add Constants.ROBUST_APK_HASH_FILE_NAM file to resources.ap_
@@ -214,6 +220,7 @@ class RobustApkHashAction implements Action<Project> {
 
     def String computeRobustHash(ArrayList<File> partFiles) {
         File sumFile = new File("temp_robust_sum.zip")
+//        根据输入的file打包为输出的目录
         RobustApkHashZipUtils.packZip(sumFile, partFiles)
         String apkHashValue = fileMd5(sumFile)
         if (sumFile.exists()) {
@@ -244,6 +251,7 @@ class RobustApkHashAction implements Action<Project> {
         return bigInt.toString(16);
     }
 
+    // 写入哈希值
     def static File createHashFile(String dir, String hashFileName, String hashValue) {
         File hashFile = new File(dir, hashFileName)
         if (hashFile.exists()) {
@@ -255,7 +263,7 @@ class RobustApkHashAction implements Action<Project> {
         fileWriter.close()
         return hashFile
     }
-
+//    创建hash文件
     def static void createHashFile2(String filePath, String fileName, String content) throws IOException {
         ZipInputStream zis = new ZipInputStream(new FileInputStream(filePath));
         ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(filePath + ".temp"));
@@ -284,6 +292,7 @@ class RobustApkHashAction implements Action<Project> {
     }
 
 
+//    查看版本是否大于4.1
     static boolean isGradlePlugin300orAbove(Project project) {
         //gradlePlugin3.0 -> gradle 4.1+
         return compare(project.getGradle().gradleVersion, "4.1") >= 0

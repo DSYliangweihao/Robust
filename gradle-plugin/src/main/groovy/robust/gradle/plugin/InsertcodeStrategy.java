@@ -62,6 +62,12 @@ public abstract class InsertcodeStrategy {
      */
     protected abstract void insertCode(List<CtClass> box, File jarFile) throws CannotCompileException, IOException, NotFoundException;
 
+    /**
+     * 是否需要插入是需要根据 xml配置的hotfix or expect不期望的
+     * @param className
+     *
+     * @return
+     */
     protected boolean isNeedInsertClass(String className) {
 
         //这样子可以在需要埋点的剔除指定的类
@@ -78,6 +84,12 @@ public abstract class InsertcodeStrategy {
         return false;
     }
 
+    /**
+     * 这里也是一个工具类 根据 ZipEntry 写入数据
+     * @param classBytesArray
+     * @param zos
+     * @param entryName
+     */
     protected void zipFile(byte[] classBytesArray, ZipOutputStream zos, String entryName) {
         try {
             ZipEntry entry = new ZipEntry(entryName);

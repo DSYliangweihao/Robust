@@ -1,13 +1,13 @@
 apply plugin: 'com.android.library'
 project.archivesBaseName = 'robust'
 android {
-    compileSdkVersion 24
-    buildToolsVersion '25.0.2'
+    compileSdkVersion COMPILE_VERSION
+    buildToolsVersion BUILD_VERSION
     defaultConfig {
-        minSdkVersion 9
-        targetSdkVersion 24
-        versionCode 1
-        versionName '1.0'
+        minSdkVersion MIN_VERSION
+        targetSdkVersion COMPILE_VERSION
+        versionCode APP_VERSION
+        versionName APP_VER_NAME
     }
     buildTypes {
         release {

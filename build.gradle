@@ -1,9 +1,28 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
+ext{
+    BUILD_VERSION = '28.0.3'
+    COMPILE_VERSION = 28
+    MIN_VERSION = 16
+    APP_VERSION = 100
+    APP_VER_NAME = '1.0.0'
+    BASE_APPLICATION_ID = 'com.meituan.robust.'
+}
+
+
+def String getApplicationID(String name){
+    return "'$BASE_APPLICATION_ID''$name'"
+}
 buildscript {
     repositories {
+        maven {
+            url 'https://maven.aliyun.com/repository/public/'
+        }
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
         mavenLocal()
-        jcenter()
+        mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.1.0'
@@ -23,11 +42,14 @@ configurations.all {
 }
 allprojects {
     repositories {
-        mavenLocal()
         maven {
-            url "http://depot.sankuai.com/nexus/content/groups/public/"
+            url 'https://maven.aliyun.com/repository/public/'
         }
-        jcenter()
+        maven {
+            url 'https://maven.aliyun.com/repository/google'
+        }
+        mavenLocal()
+        mavenCentral()
     }
     tasks.withType(JavaCompile) { options.encoding = "UTF-8" }
 }
