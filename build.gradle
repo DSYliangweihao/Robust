@@ -9,8 +9,7 @@ ext{
     BASE_APPLICATION_ID = 'com.meituan.robust.'
 }
 
-
-def String getApplicationID(String name){
+String getApplicationID(String name){
     return "$BASE_APPLICATION_ID$name"
 }
 buildscript {

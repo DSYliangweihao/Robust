@@ -2,6 +2,7 @@ package robust.gradle.plugin
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
+import com.google.common.annotations.Beta
 import com.meituan.robust.Constants
 import javassist.ClassPool
 import org.gradle.api.Plugin
@@ -18,10 +19,11 @@ import java.util.zip.GZIPOutputStream
  *
  */
 
+
 class RobustTransform extends Transform implements Plugin<Project> {
     Project project
     static Logger logger
-    private static List<String> hotfixPackageList = new ArrayList<>();
+    private static List<String> hotfixPackageList = new ArrayList<>()
     private static List<String> hotfixMethodList = new ArrayList<>();
     private static List<String> exceptPackageList = new ArrayList<>();
     private static List<String> exceptMethodList = new ArrayList<>();
@@ -168,7 +170,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
             classPool.appendClassPath((String) it.absolutePath)
         }
 
-//      得到所有的CtClass
+//      得到所有的CtClass 这里所有的CtClass都是通过ClassPool来获取的
         def box = ConvertUtils.toCtClasses(inputs, classPool)
 
 //        logger.quiet "check all class cost $cost second, class count: ${box.size()}"
@@ -177,6 +179,7 @@ class RobustTransform extends Transform implements Plugin<Project> {
         } else {
             insertcodeStrategy = new JavaAssistInsertImpl(hotfixPackageList, hotfixMethodList, exceptPackageList, exceptMethodList, isHotfixMethodLevel, isExceptMethodLevel, isForceInsertLambda);
         }
+//       4.根据输入的class的文件然后开始从新打包
         insertcodeStrategy.insertCode(box, jarFile);
         writeMap2File(insertcodeStrategy.methodMap, Constants.METHOD_MAP_OUT_PATH)
 

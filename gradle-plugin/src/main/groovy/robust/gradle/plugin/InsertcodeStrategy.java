@@ -70,12 +70,14 @@ public abstract class InsertcodeStrategy {
      */
     protected boolean isNeedInsertClass(String className) {
 
+//        如果不想被插入那么就直接false
         //这样子可以在需要埋点的剔除指定的类
         for (String exceptName : exceptPackageList) {
             if (className.startsWith(exceptName)) {
                 return false;
             }
         }
+//        根据热更新的列表  匹配方法
         for (String name : hotfixPackageList) {
             if (className.startsWith(name)) {
                 return true;

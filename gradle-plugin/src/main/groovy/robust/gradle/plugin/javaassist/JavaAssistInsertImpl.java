@@ -41,9 +41,11 @@ public class JavaAssistInsertImpl extends InsertcodeStrategy {
 
     @Override
     protected void insertCode(List<CtClass> box, File jarFile) throws CannotCompileException, IOException, NotFoundException {
+//        输出文件
         ZipOutputStream outStream = new JarOutputStream(new FileOutputStream(jarFile));
 //        new ForkJoinPool().submit {
         for (CtClass ctClass : box) {
+//            是否需要插入类
             if (isNeedInsertClass(ctClass.getName())) {
                 //change class modifier
                 ctClass.setModifiers(AccessFlag.setPublic(ctClass.getModifiers()));
